@@ -1,0 +1,21 @@
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+      - cron:  '0 0 * * *'
+
+permissions: write-all
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-python@v5
+        - run: python start.py > data.json
+        - run: |-
+            git config user.name 'GitHub Actions'
+            git config user.email 'actions@users.noreply.github.com'
+            git add -A
+            git commit -m "Update at $(date -R)" || exit 0
+            git push
